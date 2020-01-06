@@ -1,2 +1,2 @@
-# deminer
-Senior Design Demining Project
+# Senior Design Demining Project
+
