@@ -1,12 +1,13 @@
-void PrintLogo() {   
-    runTime =  millis()/1000.0; 
-    Serial1.print(runTime, 3); 
-    Serial1.write(9); 
-    Serial1.println(" "); 
+void pulseOut(int pin, int duration) {
+  digitalWrite(pin, HIGH);
+  delayMicroseconds(duration);
+  digitalWrite(pin, LOW);
 }
 
-void PrintMon() {     
-    runTime =  millis()/1000.0; 
-    Serial.print(runTime, 3); 
-    Serial.println(" ");      
+void p(const char *format, ...) {
+  va_list args;
+  va_start(args, format);
+  vsnprintf(data, 100, format, args);
+  Serial.print(data);
+  va_end(args);
 }
