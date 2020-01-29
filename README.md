@@ -9,6 +9,7 @@ Then I can merge code when you're ready. That way we don't have to deal with peo
 cd <some directory>
 git clone https://github.com/notgate/deminer
 cd deminer
+git branch <your branch name>
 git checkout <your branch name>
 ```
 * Committing changes
