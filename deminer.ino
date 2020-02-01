@@ -1,9 +1,11 @@
 /* Deminer 2020
- * 
- * NOTE: YOU LITERALLY CANNOT PRINT STRINGS
- *  TO SERIAL IN loop() WITHOUT RUINING THE WHOLE 
- *  THING FOR SOME REASON (Speed will be 0 intermittently)
- */ 
+
+   NOTE: YOU LITERALLY CANNOT PRINT STRINGS
+    TO SERIAL IN loop() WITHOUT RUINING THE WHOLE
+    THING FOR SOME REASON (Speed will be 0 intermittently)
+*/
+
+#include "gps.h"
 
 byte elevator_pin  = 3,  //  speed - yel
      throttle_pin  = 4,  //  mode - blu
@@ -63,6 +65,12 @@ void setup() {
   //  t1 = millis();
   //  t2 = millis() + printInterval;
 
+  //  navigation_setup();
+
+  //  SendGPSRequest(GPSDIRECTION);
+  //  Receive_GPS_Data(ptr_gps);
+  //ProcessData(pts_gps, byte *aValue, int count);
+
   delay(1000);
 }
 
@@ -83,7 +91,8 @@ void loop() {
   else if (Mode <= 1200)                mode = DRIVE;
 
   if (debug) {
-    p("%d\t%d\t%d\t%d\t%d\n", Mode, Speed, Turn, mode, auto_mode);
+    SendGPSRequest(GPSDIRECTION);
+    p("%d\t%d\t%d\t%d\t%d\t%d\n", Mode, Speed, Turn, mode, auto_mode, GPS.gps_Course);
   }
 
   switch (mode) {
@@ -129,8 +138,10 @@ void loop() {
     case DRIVE:
       auto_mode = STARTING;
       digitalWrite(contactor_pin, HIGH);
-      pulseOut(speed_pin, autoSpeed + (Speed - autoSpeed) / 5);
-      pulseOut(turn_pin,  autoTurn  + (Turn  - autoTurn)  / 5);
+      if (Speed<1470 || Speed>1500 || Turn>1520 || Turn<1490) {
+        pulseOut(speed_pin, autoSpeed + (Speed - autoSpeed) / 5 - 50);
+        pulseOut(turn_pin,  autoTurn  + (Turn  - autoTurn)  / 5);
+      }
       break;
   }
 }
