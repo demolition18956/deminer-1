@@ -45,8 +45,9 @@ enum Auto_Mode {
 } auto_mode;
 
 void setup() {
-  Serial.begin(9600);  //  serial to monitor
-  Serial1.begin(9600); //  serial to data logger
+  Serial.begin(9600);  // stdout
+  Serial1.begin(9600); // data logger
+  // Serial2.begin(9600); // metal detector?
 
   // Inputs
   pinMode(elevator_pin,   INPUT); // Speed
@@ -63,13 +64,12 @@ void setup() {
   digitalWrite(speed_pin,     LOW);
   digitalWrite(turn_pin,      LOW);
   digitalWrite(contactor_pin, LOW);
-  digitalWrite(horn_pin,      LOW); // How do you turn the horn on?
+  digitalWrite(horn_pin,      LOW);
 
   // t1 = millis();
   // t2 = millis() + printInterval;
 
   // navigation_setup();
-
   // SendGPSRequest(GPSDIRECTION);
   // Receive_GPS_Data(ptr_gps);
   // ProcessData(pts_gps, byte *aValue, int count);
@@ -97,8 +97,9 @@ void loop() {
   if (debug) {
     // SendGPSRequest(GPSDIRECTION);
     p("%d\t%d\t%d\t%d\t%d\t%d\n", Mode, Speed, Turn, mode, auto_mode, GPS.gps_Course);
-    //p("%d\t%d\t%d\t%d \t\t %d\t%d\t%d\n", Mode, Speed, Turn, Detector, mode, auto_mode, GPS.gps_Course);
   }
+
+  // if (Serial2.available() > 0) Serial.println(Serial2.read(), DEC);
 
   switch (mode) {
     case OFF:
@@ -109,11 +110,13 @@ void loop() {
       break;
     case AUTO:
       digitalWrite(contactor_pin, HIGH);
+      // digitialWrite(horn_pin, HIGH); // YOU WILL DIE
+      // pulseOut(horn_pin, 10000); // HOW DO I MAKE IT QUIETER???
       switch (auto_mode) {
         case DONE:
           break;
         case STARTING:
-          // get 4 corners (hardcoded by us with 4 #defines)
+          // get 4 corners {lat,long} (hardcoded by us with 4 #defines)
           // create grid (create 100 waypoints interpolated from those corners)
           // calculate path through grid (simple zig zag)
           // goto closest corner and center yourself in the square

@@ -2,7 +2,6 @@ void pulseOut(int pin, int duration) {
   digitalWrite(pin, HIGH);
   delayMicroseconds(duration);
   digitalWrite(pin, LOW);
-  return;
 }
 
 // cute but useless for now because printing in loop() is possessed
