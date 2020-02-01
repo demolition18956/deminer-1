@@ -7,20 +7,20 @@
 
 #include "gps.h"
 
-byte elevator_pin  = 3,  //  speed - yel
-     throttle_pin  = 4,  //  mode - blu
-     rudder_pin    = 5,  //  turn - blk
-     contactor_pin = 7,
-     speed_pin     = 8,  // Mega to Saber S1
-     turn_pin      = 9,  // Mega to Saber S2
-     horn_pin      = 10;
-//metal_detector_pin = 11
-//LED_pin = 12
+byte elevator_pin  = 3,   // yellow - Speed
+     throttle_pin  = 4,   // blue - Mode
+     rudder_pin    = 5,   // black - Turn
+     contactor_pin = 7,   // white
+     speed_pin     = 8,   // red - Mega to Saber S1
+     turn_pin      = 9,   // red - Mega to Saber S2
+     horn_pin      = 10,  // blue
+     detector_pin  = 11;  // what pin is the metal detector input?
 
 bool debug = true;
 int Speed,
     Mode,
     Turn,
+    Detector,
     autoSpeed = 1470,
     autoTurn  = 1500;
 unsigned long runTime,
@@ -48,28 +48,31 @@ void setup() {
   Serial.begin(9600);  //  serial to monitor
   Serial1.begin(9600); //  serial to data logger
 
-  pinMode(elevator_pin,  INPUT);
-  pinMode(throttle_pin,  INPUT);
-  pinMode(rudder_pin,    INPUT);
-  pinMode(speed_pin,     OUTPUT);
-  pinMode(turn_pin,      OUTPUT);
-  pinMode(contactor_pin, OUTPUT);
-  // pinMode(metal_detector_pin, INPUT);
-  // pinMode(LED_pin,            OUTPUT);
+  // Inputs
+  pinMode(elevator_pin,   INPUT); // Speed
+  pinMode(throttle_pin,   INPUT); // Mode
+  pinMode(rudder_pin,     INPUT); // Turn
+  //pinMode(detector_pin,   INPUT); // Detector
+
+  // Outputs
+  pinMode(speed_pin,      OUTPUT); // Speed
+  pinMode(turn_pin,       OUTPUT); // Turn
+  pinMode(contactor_pin,  OUTPUT); // Contactor
+  pinMode(horn_pin,       OUTPUT); // Horn
 
   digitalWrite(speed_pin,     LOW);
   digitalWrite(turn_pin,      LOW);
   digitalWrite(contactor_pin, LOW);
-  // digitalWrite(LED_pin
+  digitalWrite(horn_pin,      LOW); // How do you turn the horn on?
 
-  //  t1 = millis();
-  //  t2 = millis() + printInterval;
+  // t1 = millis();
+  // t2 = millis() + printInterval;
 
-  //  navigation_setup();
+  // navigation_setup();
 
-  //  SendGPSRequest(GPSDIRECTION);
-  //  Receive_GPS_Data(ptr_gps);
-  //ProcessData(pts_gps, byte *aValue, int count);
+  // SendGPSRequest(GPSDIRECTION);
+  // Receive_GPS_Data(ptr_gps);
+  // ProcessData(pts_gps, byte *aValue, int count);
 
   delay(1000);
 }
@@ -81,9 +84,10 @@ void loop() {
   //  }
   //  t2 = millis() + printInterval;
 
-  Speed = pulseIn (elevator_pin, HIGH, 25000);
-  Turn  = pulseIn (rudder_pin, HIGH, 25000);
-  Mode  = pulseIn (throttle_pin, HIGH, 25000);
+  Speed     = pulseIn (elevator_pin, HIGH, 25000);
+  Turn      = pulseIn (rudder_pin,   HIGH, 25000);
+  Mode      = pulseIn (throttle_pin, HIGH, 25000);
+  //Detector  = pulseIn (detector_pin, HIGH, 25000);
 
   if      (Speed == 0 || Turn == 0)     mode = OFF;
   else if (Mode >= 1800)                mode = STOP;
@@ -91,8 +95,9 @@ void loop() {
   else if (Mode <= 1200)                mode = DRIVE;
 
   if (debug) {
-    SendGPSRequest(GPSDIRECTION);
+    // SendGPSRequest(GPSDIRECTION);
     p("%d\t%d\t%d\t%d\t%d\t%d\n", Mode, Speed, Turn, mode, auto_mode, GPS.gps_Course);
+    //p("%d\t%d\t%d\t%d \t\t %d\t%d\t%d\n", Mode, Speed, Turn, Detector, mode, auto_mode, GPS.gps_Course);
   }
 
   switch (mode) {
@@ -100,6 +105,7 @@ void loop() {
     case STOP:
       auto_mode = STARTING;
       digitalWrite(contactor_pin, LOW);
+
       break;
     case AUTO:
       digitalWrite(contactor_pin, HIGH);
@@ -107,28 +113,30 @@ void loop() {
         case DONE:
           break;
         case STARTING:
-          // get 4 coords
-          // create grid
-          // calculate path through grid using 4 coords
+          // get 4 corners (hardcoded by us with 4 #defines)
+          // create grid (create 100 waypoints interpolated from those corners)
+          // calculate path through grid (simple zig zag)
+          // goto closest corner and center yourself in the square
+          // record current position as home
 
-          // if ready, then
+          // if everything's ready, then
           auto_mode = DEMINING;
           break;
         case DEMINING:
           // move through path
           // if mine, record its position and send an alert
 
-          // if done
+          // if the whole field has been demined, then
           auto_mode = RETURNING;
           break;
         case RETURNING:
-          // go to start position
+          // go home
 
           // if back at start position, then
           auto_mode = PRINTING;
           break;
         case PRINTING:
-          // print results
+          // print results (contains GPS location of all mines in a nice grid format)
 
           // if done printing, then
           auto_mode = DONE;
@@ -138,10 +146,8 @@ void loop() {
     case DRIVE:
       auto_mode = STARTING;
       digitalWrite(contactor_pin, HIGH);
-      if (Speed<1470 || Speed>1500 || Turn>1520 || Turn<1490) {
-        pulseOut(speed_pin, autoSpeed + (Speed - autoSpeed) / 5 - 50);
-        pulseOut(turn_pin,  autoTurn  + (Turn  - autoTurn)  / 5);
-      }
+      pulseOut(speed_pin, autoSpeed + (Speed - autoSpeed) / 5 - 50);
+      pulseOut(turn_pin,  autoTurn  + (Turn  - autoTurn)  / 5);
       break;
   }
 }
