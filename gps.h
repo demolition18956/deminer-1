@@ -58,7 +58,8 @@ typedef struct {
   bool GPSGood;
 } roverData;
 
-void setup_navigation();
+void navigation_setup();
+void navigation_loop();
 void GPS_Setup(gpsData *ptr_gps);
 void BoundarySetup(boundaryCorner *b_PTR);
 void WaypointSetup(waypoint *wpoint);
