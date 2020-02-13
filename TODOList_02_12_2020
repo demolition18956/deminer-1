@@ -1,0 +1,24 @@
+TEST: How well the rover drive in a straight line.
+
+TEST: How often we have to course correct the
+			rover after telling it where it should go.
+
+TEST: How do these variables change with speed and
+			how fast can we accurately control the rover.
+
+TEST: Horn loudness in an outdoor space.
+
+TEST: How we accurate is the GPS/IMU getting locations
+			of the 4 corners of the minefield.
+
+TEST: How quickly we can drive over a mine and still
+			allow enough time for the rover to detect a mine.
+
+TEST: How accurate can we turn the rover into a direction
+			that is acceptable.
+
+TEST: How accurate can we turn the rover using the GPS.
+
+
+At some point the minefield still needs to be chalked
+off during this time period.
