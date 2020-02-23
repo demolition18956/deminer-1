@@ -1,3 +1,11 @@
+/*
+  This is the code that goes on teh gps mega and only handles the
+  gps and sending the data to teh rover mega. all of the message
+  handling and setup is in the setup and loop funtions off this
+  code. The GPS is on Serial3 like before and the other mega is on
+  Serial2 If you have any other questions, let me know. - Jacob
+*/
+
 #ifndef ROVERUPDATE
 #define ROVERUPDATE
 #include <math.h>

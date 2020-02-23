@@ -1,3 +1,11 @@
+/*
+  This is the modified code that goes onto teh original mega
+  to control the rover all of the new code to make this mega
+  talk to the gps mega is in the loop where the auto mode starts.
+  It talks over the Serial3 port like before. If you need more
+  explaination on how it works, let me know - Jacob
+*/
+
 bool gpstest = 0;
 unsigned long lastMillis;
 
