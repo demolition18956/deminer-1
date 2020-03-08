@@ -1,14 +1,19 @@
 # Senior Design Demining Project
-This code base will change significantly on Saturday, Feb 1st.
+A senior project for autonomous demining. 
+
+## TODO
+1) Read from the GPS properly.  
+2) How do I read from the metal detector? It doesn't seem to be a pin so maybe it's a serial port.  
+3) Why does writing to Serial sometimes screw everything up?  
+4) Can we make the horn quieter????
 
 ## Contributing
-I'll probably just give everyone write access and let you push to your own branches.   
-Then I can merge code when you're ready. That way we don't have to deal with people not understanding Pull Requests or someone overwriting master.  
 * Clone the repo
 ```bash
 cd <some directory>
 git clone https://github.com/notgate/deminer
 cd deminer
+git branch <your branch name>
 git checkout <your branch name>
 ```
 * Committing changes
