@@ -9,18 +9,6 @@
 bool gpstest = 0;
 unsigned long lastMillis;
 
-const byte GPSHEALTH      = 0x55;
-const byte GPSPOSNORTH      = 0x7B;
-const byte GPSPOSEAST       = 0x7C;
-const byte GPSVELNORTH      = 0x7F;
-const byte GPSVELEAST       = 0x80;
-const byte GPSLAT         = 0x84;
-const byte GPSLONG        = 0x85;
-const byte GPSDIRECTION     = 0x87;
-const byte GPSVELOCITY      = 0x88;
-const byte GPSFLASHCOMMIT   = 0xAB;
-const byte GPSSETHOME     = 0xAE;
-
 byte elevator_pin  = 3,   // yellow - Speed
      throttle_pin  = 4,   // blue - Mode
      rudder_pin    = 5,   // black - Turn
@@ -50,6 +38,7 @@ enum Auto_Mode {
 void setup() {
   Serial.begin(9600);  // stdout
   //Serial1.begin(9600); // data logger
+  start();
 
 	autoSpeed = 1440;
 	autoTurn  = 1500;
@@ -86,7 +75,7 @@ void loop() {
   Serial.print(Speed);
   Serial.write(9);
   Serial.println(Turn);
-*/ 
+*/
 
 	//zero when transmitter off
 	  if ((Speed == 0) || (Turn == 0)) {
@@ -105,22 +94,18 @@ void loop() {
 	// throttle middle position, autonomous
 	  else if((Mode > 1200)&&(Mode < 1800)){
 
-      Serial3.begin(9600);
-      while(!Serial3);
-
-      if (Serial3.available() > 0) 
+      if (Serial3.available() > 0)
       {
         // read the incoming byte:
         float inFloat = Serial3.parseFloat();
         //Serial.print("Received: ");
         Serial.println(inFloat);
       }
-      
+
       if (millis() - lastMillis >= 2*1000UL)
       {
         lastMillis = millis();  //get ready for the next iteration
         Serial3.write(GPSDIRECTION);
-        //Serial.println("wrote GPSDIRECTION.");
       }
 
       /*
@@ -131,7 +116,7 @@ void loop() {
       digitalWrite(contactor_pin, HIGH);
       pulseOut(speed_pin, 1440);
       pulseOut(turn_pin,  1500);
-      
+
 			switch (auto_mode) {
 				case DONE:
 					break;
